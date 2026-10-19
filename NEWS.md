@@ -1,5 +1,32 @@
 # ActiSleep 1.0.0
 
+## CRAN submission preparation
+
+* Reviewed package metadata and dependency declarations for CRAN submission.
+* Added a generated SQLite fixture test for `read_agd()` so file parsing,
+  timestamp construction, and output columns are tested without committing a
+  device-specific AGD file.
+* Removed the unavailable `accelerometry` dependency. With the existing
+  `weartime()`
+  settings (`tol = 0`, `tol_upper = 99`, `nci = FALSE`,
+  `days_distinct = FALSE`), only full runs of zero-count epochs can be
+  non-wear, so a base R run-length classifier now produces the same epoch
+  mask. Self-contained tests check the classifier's boundary behavior.
+* Corrected the `min_wear_minutes` documentation: this value sets the
+  classifier's minimum zero-run window; it is not a minimum total-wear
+  duration.
+* Fixed `BestSegmentation()` when `K` exceeds the original `Kmax`; the
+  compressed data length is now set before combining forward and reverse
+  costs.
+* Registered the existing `Segmentor` print method for S3 dispatch.
+* Fixed `Segmentor` printing to detect S4 slots, so model parameters,
+  overdispersion, and mean values are displayed when present.
+* Added regression tests for full wear masks across window lengths and
+  boundary cases, as well as tests for sleep
+  interval helpers, segment classification, and segmentor validation and
+  model selection. Added rolling-window edge tests and exercised all five
+  saved-cost Rcpp model paths, including parameter printing.
+
 This release is a comprehensive overhaul introducing a modernised C++ interface,
 a cleaner two-function API, snake_case naming throughout, an S3 result class,
 and a full testthat suite.  It is a **breaking change** from v0.2.2.
